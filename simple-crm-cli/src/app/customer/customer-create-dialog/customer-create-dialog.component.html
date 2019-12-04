@@ -1,0 +1,36 @@
+<mat-dialog-content>
+    <form [formGroup]="detailForm" novalidate>
+      <mat-form-field>
+        <input matInput placeholder="First Name" formControlName="firstName" name="firstName">
+        <mat-error>First name is required</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+          <input matInput placeholder="Last Name" formControlName="lastName" name="lastName">
+          <mat-error>Last name is required</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+            <input matInput placeholder="Phone Number" formControlName="phoneNumber" name="phoneNumber">
+      </mat-form-field>
+      <mat-form-field>
+          <input matInput #emailAddress placeholder="Email Address" formControlName="emailAddress" name="emailAddress">
+          <mat-error *ngIf="!emailAddress.value">Email address is required</mat-error>
+          <mat-error *ngIf="emailAddress.value && !emailAddress.valid">Invalid email address</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+          <mat-select placeholder="Contact Method" formControlName="preferredContactMethod" name="preferredContactMethod">
+              <mat-option value="email">Email</mat-option>
+              <mat-option value="phone">Phone</mat-option>
+          </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select placeholder="Customer Status" formControlName="statusCode" name="statusCode">
+            <mat-option value="Prospect">Prospect</mat-option>
+            <mat-option value="Purchased">Customer</mat-option>
+        </mat-select>
+    </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="cancel()">Cancel</button>
+    <button mat-raised-button (click)="save()" color="accent">Save</button>
+  </mat-dialog-actions>

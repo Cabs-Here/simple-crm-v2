@@ -2,7 +2,9 @@
 {
     public class ValidationError
     {
-        public string Field { get; set; }
+        public string RecordId { get; set; }
+        public string PropertyName { get; set; }
         public string Message { get; set; }
+        public int StatusCode { get; set; }
     }
 }

@@ -30,11 +30,11 @@ namespace Classroom.SimpleCRM.WebApi.Models
                 .ToList();
 
             Messages = genericErrors.Count == 0 ? "Validation failed"
-                : string.Join(".", genericErrors.Distinct());
+                : string.Join('.', genericErrors.Distinct());
             Errors = modelState.Keys
                 .Where(key => !string.IsNullOrWhiteSpace(key))
                 .SelectMany(key => modelState[key].Errors
-                    .Select(x => new ValidationError { Field = key, Message = x.ErrorMessage }))
+                    .Select(x => new ValidationError { PropertyName = key, Message = x.ErrorMessage }))
                 .ToList();
         }
     }

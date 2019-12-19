@@ -5,6 +5,7 @@ using Classroom.SimpleCRM.WebApi.Auth;
 using Classroom.SimpleCRM.WebApi.Filters;
 using Classroom.SimpleCRM.WebApi.Models;
 using Classroom.SimpleCRM.WebApi.Models.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -109,10 +110,57 @@ namespace Classroom.SimpleCRM.WebApi.ApiControllers
             var user = await Authenticate(credentials.EmailAddress, credentials.Password);
             if (user == null)
             {
-                return new ValidationFailedResult("Invalid username or password.");
+                return new ValidationFailedResult("Invalid username or password.", 401);
             }
 
             var userModel = await GetUserData(user);
+            return Ok(userModel);
+        }
+
+        [Authorize(Policy = "ApiUser")]
+        [HttpPost] // POST api/auth/verify
+        [Route("verify")]
+        public async Task<IActionResult> Verify()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var userIdClaim = User.Claims.Single(c => c.Type == "id");
+                var user = _userManager.Users.FirstOrDefault(x => x.Id.ToString() == userIdClaim.Value); //.GetUserAsync(_caller);
+                if (user == null)
+                    return Forbid();
+
+                var userModel = await GetUserData(user);
+                return new ObjectResult(userModel);
+            }
+
+            return Forbid();
+        }
+        [HttpPost]
+        [Route("register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register([FromBody]RegisterViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return new ValidationFailedResult(ModelState);
+            }
+
+            var user = new CrmIdentityUser
+            {
+                Name = model.Name,
+                UserName = model.EmailAddress,
+                Email = model.EmailAddress
+            };
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (!result.Succeeded)
+            {
+                return new ValidationFailedResult(result.Errors.Select(x => x.Description));
+            }
+
+            _logger.LogInformation("User created a new account with password.");
+            var identity = await Authenticate(model.EmailAddress, model.Password);
+
+            var userModel = await GetUserData(identity);
             return Ok(userModel);
         }
 

@@ -12,11 +12,13 @@ namespace Classroom.SimpleCRM.WebApi.Controllers
     public class HomeController : Controller
     {
         [Route("home")]
+        [ResponseCache(Duration = 30, Location = ResponseCacheLocation.Any)]
         public IActionResult Index()
         {
             return View();
         }
         [Route("privacy")]
+        [ResponseCache(Duration = 30, Location = ResponseCacheLocation.Any)]
         public IActionResult Privacy()
         {
             return View();

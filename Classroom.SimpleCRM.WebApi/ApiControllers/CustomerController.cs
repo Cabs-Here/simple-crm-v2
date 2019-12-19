@@ -26,7 +26,9 @@ namespace Classroom.SimpleCRM.WebApi.ApiControllers
         /// Gets all customers visible in the account of the current user
         /// </summary>
         /// <returns></returns>
+        
         [HttpGet("", Name = "GetCustomers")] //  ./api/customers
+        [ResponseCache(Duration = 30, Location = ResponseCacheLocation.Any)]
         public IActionResult GetCustomers([FromQuery]CustomerListParameters resourceParameters)
         {
             if (resourceParameters.Page < 1)
@@ -53,6 +55,7 @@ namespace Classroom.SimpleCRM.WebApi.ApiControllers
                 Page = resourceParameters.Page
             };
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(pagination));
+            
 
             var models = customers.Select(c => new CustomerDisplayViewModel(c));
             return Ok(models);
@@ -79,6 +82,7 @@ namespace Classroom.SimpleCRM.WebApi.ApiControllers
         /// <returns></returns>
         [Route("{id}")] //  ./api/customers/:id
         [HttpGet]
+        [ResponseCache(Duration = 30, Location = ResponseCacheLocation.Any)]
         public IActionResult Get(int id)
         {
             var customer = _customerData.Get(id);
@@ -87,7 +91,9 @@ namespace Classroom.SimpleCRM.WebApi.ApiControllers
                 return NotFound();
             }
             var model = new CustomerDisplayViewModel(customer);
+            Response.Headers.Add("ETag", "\"" + customer.LastContactDate.ToString() + "\"");
             return Ok(model);
+            
         }
         [HttpPost("")] //  ./api/customers
         public IActionResult Create([FromBody]CustomerCreateViewModel model)
@@ -108,10 +114,12 @@ namespace Classroom.SimpleCRM.WebApi.ApiControllers
                 EmailAddress = model.EmailAddress,
                 PhoneNumber = model.PhoneNumber,
                 PreferredContactMethod = model.PreferredContactMethod
+                LastContactDate = DateTime.UtcNow
             };
 
             _customerData.Add(customer);
             _customerData.Commit();
+            Response.Headers.Add("ETag", "\"" + customer.LastContactDate.ToString() + "\"");
             return Ok(new CustomerDisplayViewModel(customer)); //includes new auto-assigned id
         }
         [HttpPut("{id}")] //  ./api/customers/:id
@@ -132,12 +140,19 @@ namespace Classroom.SimpleCRM.WebApi.ApiControllers
                 return NotFound();
             }
 
+            string ifMatch = Request.Headers["If-Match"];
+            if (ifMatch != customer.LastContactDate.ToString())
+            {
+                return StatusCode(422, "This record has been updated by another user. Please refresh and try again.");
+            }
+
             //update only editable properties from model
             customer.EmailAddress = model.EmailAddress;
             customer.FirstName = model.FirstName;
             customer.LastName = model.LastName;
             customer.PhoneNumber = model.PhoneNumber;
             customer.PreferredContactMethod = model.PreferredContactMethod;
+            customer.LastContactDate = DateTime.UtcNow;
 
             _customerData.Update(customer);
             _customerData.Commit();

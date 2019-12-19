@@ -15,12 +15,16 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System;
+using NSwag.Generation.Processors.Security;
+using System.Collections.Generic;
+using NSwag;
+using NSwag.AspNetCore;
 
 namespace Classroom.SimpleCRM.WebApi
 {
     public class Startup
     {
-        private const string SecretKey = "jkIke23Ldpwskdf73pBd"; //<-- NEW: make up a random key here
+        private const string SecretKey = "sdkdhsHOQPdjspQNSHsjsSDQWJqzkpdnf"; //<-- NEW: make up a random key here
         private readonly SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
 
         public Startup(IConfiguration configuration)
@@ -33,6 +37,8 @@ namespace Classroom.SimpleCRM.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddResponseCaching();
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -69,7 +75,7 @@ namespace Classroom.SimpleCRM.WebApi
             var tokenValidationPrms = new TokenValidationParameters
             {
                 ValidateIssuer = true,
-                ValidIssuer = jwtOptions[nameof(JwtIssuerOptions.IssuedAt)],
+                ValidIssuer = jwtOptions[nameof(JwtIssuerOptions.Issuer)],
                 ValidateAudience = true,
                 ValidAudience = jwtOptions[nameof(JwtIssuerOptions.Audience)],
                 ValidateIssuerSigningKey = true,
@@ -92,7 +98,7 @@ namespace Classroom.SimpleCRM.WebApi
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("ApiPolicy", policy => policy.RequireClaim(
+                options.AddPolicy("ApiUser", policy => policy.RequireClaim(
                     Constants.JwtClaimIdentifiers.Rol,
                     Constants.JwtClaims.ApiAccess));
             });
@@ -102,13 +108,32 @@ namespace Classroom.SimpleCRM.WebApi
             });
             identityBuilder = new IdentityBuilder(
                 identityBuilder.UserType,
-                typeof(IdentityRole),
+                typeof(IdentityRole<Guid>),
                 identityBuilder.Services);
             identityBuilder.AddEntityFrameworkStores<CrmIdentityDbContext>();
             identityBuilder.AddRoleValidator<RoleValidator<IdentityRole>>();
-            identityBuilder.AddRoleManager<RoleManager<IdentityRole>>();
+            identityBuilder.AddRoleManager<RoleManager<IdentityRole<Guid>>>();
             identityBuilder.AddSignInManager<SignInManager<CrmIdentityUser>>();
             identityBuilder.AddDefaultTokenProviders();
+
+            services.AddOpenApiDocument(options =>
+            {
+                options.DocumentName = "v1";
+                options.Title = "Simple CRM";
+                options.Version = "1.0";
+                options.DocumentProcessors.Add(new SecurityDefinitionAppender("JWT token",
+                    new List<string>(), //no scope names to add
+                    new OpenApiSecurityScheme
+                    {
+                        In = OpenApiSecurityApiKeyLocation.Header,
+                        Name = "Authorization",
+                        Type = OpenApiSecuritySchemeType.ApiKey,
+                        Description = "Type into the textbox: 'Bearer {your_JWT_token}'. You can get a JWT from endpoints: '/auth/register' or '/auth/login'"
+                    }
+                ));
+                options.OperationProcessors.Add(
+                    new OperationSecurityScopeProcessor("JWT token"));
+            });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddDbContext<CrmIdentityDbContext>(options =>
@@ -144,10 +169,22 @@ namespace Classroom.SimpleCRM.WebApi
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseResponseCaching();
             app.UseSpaStaticFiles();
             app.UseCookiePolicy();
-
             app.UseAuthentication();
+            app.UseOpenApi();
+            app.UseSwaggerUi3(settings =>
+            {
+                var microsoftOptions = Configuration.GetSection(nameof(MicrosoftAuthSettings));
+                settings.OAuth2Client = new OAuth2ClientSettings
+                {
+                    ClientId = microsoftOptions[nameof(MicrosoftAuthSettings.ClientId)],
+                    ClientSecret = microsoftOptions[nameof(MicrosoftAuthSettings.ClientSecret)],
+                    AppName = "Simple CRM",
+                    Realm = "Nexul Academy"
+                };
+            });
 
             app.UseMvc(routes =>
             {

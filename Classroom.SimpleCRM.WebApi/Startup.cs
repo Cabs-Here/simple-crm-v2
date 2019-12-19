@@ -19,6 +19,9 @@ using NSwag.Generation.Processors.Security;
 using System.Collections.Generic;
 using NSwag;
 using NSwag.AspNetCore;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Classroom.SimpleCRM.WebApi
 {
@@ -135,7 +138,18 @@ namespace Classroom.SimpleCRM.WebApi
                     new OperationSecurityScopeProcessor("JWT token"));
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc()
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                    .AddJsonOptions(options =>
+                    {
+                        var settings = options.SerializerSettings;
+                        settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                        settings.Converters = new JsonConverter[]
+                        {
+                        new IsoDateTimeConverter(),
+                        new StringEnumConverter(true)
+                        };
+                    });
             services.AddDbContext<CrmIdentityDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));

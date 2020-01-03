@@ -22,6 +22,7 @@ using NSwag.AspNetCore;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Classroom.SimpleCRM.WebApi.Filters;
 
 namespace Classroom.SimpleCRM.WebApi
 {
@@ -138,7 +139,9 @@ namespace Classroom.SimpleCRM.WebApi
                     new OperationSecurityScopeProcessor("JWT token"));
             });
 
-            services.AddMvc()
+            services.AddMvc(o => {
+                o.Filters.Add(typeof(GlobalExceptionFilter));
+            })
                     .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                     .AddJsonOptions(options =>
                     {

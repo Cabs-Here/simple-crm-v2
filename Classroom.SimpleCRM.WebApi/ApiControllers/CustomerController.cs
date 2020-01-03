@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace Classroom.SimpleCRM.WebApi.ApiControllers
 {
@@ -14,12 +15,15 @@ namespace Classroom.SimpleCRM.WebApi.ApiControllers
     public class CustomerController : Controller
     {
         private readonly ICustomerData _customerData;
+        private readonly ILogger<CustomerController> _logger;
         private readonly IUrlHelper _urlHelper;
 
         public CustomerController(ICustomerData customerData,
+            ILogger<CustomerController> logger,
             IUrlHelper urlHelper)
         {
             _customerData = customerData;
+            _logger = logger;
             _urlHelper = urlHelper;
         }
         /// <summary>
@@ -42,6 +46,7 @@ namespace Classroom.SimpleCRM.WebApi.ApiControllers
             }
             else if (resourceParameters.Take > 250)
             {
+                _logger.LogError("Get Customers max items exceeded.");
                 return new ValidationFailedResult("A request can only take maximum of 250 items.");
             }
 
@@ -88,6 +93,7 @@ namespace Classroom.SimpleCRM.WebApi.ApiControllers
             var customer = _customerData.Get(id);
             if (customer == null)
             {
+                _logger.LogWarning("Customer {0} not found", id);
                 return NotFound();
             }
             var model = new CustomerDisplayViewModel(customer);
@@ -104,6 +110,7 @@ namespace Classroom.SimpleCRM.WebApi.ApiControllers
             }
             if (!ModelState.IsValid)
             {   //rules failed, return a well formed error
+                _logger.LogWarning("Customer Create failed due to validation");
                 return new ValidationFailedResult(ModelState);
             }
 
@@ -113,7 +120,7 @@ namespace Classroom.SimpleCRM.WebApi.ApiControllers
                 LastName = model.LastName,
                 EmailAddress = model.EmailAddress,
                 PhoneNumber = model.PhoneNumber,
-                PreferredContactMethod = model.PreferredContactMethod
+                PreferredContactMethod = model.PreferredContactMethod,
                 LastContactDate = DateTime.UtcNow
             };
 
@@ -131,18 +138,21 @@ namespace Classroom.SimpleCRM.WebApi.ApiControllers
             }
             if (!ModelState.IsValid)
             {   //rules failed, return a well formed error
+                _logger.LogWarning("Customer Update failed due to validation");
                 return new ValidationFailedResult(ModelState);
             }
 
             var customer = _customerData.Get(id);
             if (customer == null)
             {
+                _logger.LogWarning("Customer {0} not found", id);
                 return NotFound();
             }
 
             string ifMatch = Request.Headers["If-Match"];
             if (ifMatch != customer.LastContactDate.ToString())
             {
+                _logger.LogInformation("Customer update failed due to concurrency issue: {0}", id);
                 return StatusCode(422, "This record has been updated by another user. Please refresh and try again.");
             }
 
@@ -164,9 +174,11 @@ namespace Classroom.SimpleCRM.WebApi.ApiControllers
             var customer = _customerData.Get(id);
             if (customer == null)
             {
+                _logger.LogWarning("Customer {0} not found", id);
                 return NotFound();
             }
 
+            _logger.LogInformation("Deleting customer: {0}", id);
             _customerData.Delete(customer);
             _customerData.Commit();
             return NoContent();

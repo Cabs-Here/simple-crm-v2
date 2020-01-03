@@ -15,7 +15,8 @@ namespace Classroom.SimpleCRM.WebApi.Controllers
         [ResponseCache(Duration = 30, Location = ResponseCacheLocation.Any)]
         public IActionResult Index()
         {
-            return View();
+            throw new ApiException("An exceptional test. :)");
+            // return View();
         }
         [Route("privacy")]
         [ResponseCache(Duration = 30, Location = ResponseCacheLocation.Any)]

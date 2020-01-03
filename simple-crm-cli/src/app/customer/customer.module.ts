@@ -27,10 +27,7 @@ import { StatusIconPipe } from './status-icon.pipe';
     CustomerCreateDialogComponent
   ],
   providers: [
-    {
-      provide: CustomerService,
-      useClass: environment.production ? CustomerService : CustomerMockService
-    }
+    CustomerService
   ]
 })
 export class CustomerModule { }

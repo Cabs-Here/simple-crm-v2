@@ -6,14 +6,15 @@ import {
   MatIconModule,
   MatSidenavModule,
   MatListModule,
-  MatCardModule,
   MatTableModule,
+  MatCardModule,
   MatDialogModule,
   MatInputModule,
   MatSelectModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatProgressSpinnerModule
 } from '@angular/material';
-import {FlexLayoutModule} from '@angular/flex-layout';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 export const SHARED_MATERIAL_MODULES = [
   MatToolbarModule,
@@ -21,14 +22,16 @@ export const SHARED_MATERIAL_MODULES = [
   MatIconModule,
   MatSidenavModule,
   MatListModule,
-  MatCardModule,
   MatTableModule,
+  MatCardModule,
   MatDialogModule,
   MatInputModule,
   MatSelectModule,
+  MatSnackBarModule,
   FlexLayoutModule,
-  MatSnackBarModule
+  MatProgressSpinnerModule
 ];
+
 
 @NgModule({
   declarations: [],
@@ -38,6 +41,6 @@ export const SHARED_MATERIAL_MODULES = [
   ],
   exports: [
     ...SHARED_MATERIAL_MODULES
-  ]
+  ],
 })
 export class SharedImportsModule { }

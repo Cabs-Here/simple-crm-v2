@@ -82,7 +82,10 @@ namespace Classroom.SimpleCRM.WebApi.ApiControllers
                     PhoneNumber = profile.MobilePhone
                 };
 
-                var identityResult = await _userManager.CreateAsync(appUser, Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Substring(0, 8) + "#");
+                var password = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Substring(0, 8) + "#1aA";
+                // #1aA ensures all required character types will be in the random password
+                var identityResult = await _userManager.CreateAsync(appUser, password);
+
                 if (!identityResult.Succeeded)
                 {
                     return new ValidationFailedResult("Could not create user.", StatusCodes.Status400BadRequest);

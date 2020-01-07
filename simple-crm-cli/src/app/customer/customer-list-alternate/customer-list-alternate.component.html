@@ -1,0 +1,12 @@
+<p>customer-list-alternate works!</p>
+
+<mat-card *ngFor="let Customer of customers$ | async">
+  <mat-card-title>{{Customer.firstName}} {{Customer.lastName}}</mat-card-title>
+  <mat-card-content>
+    Phone: {{Customer.phoneNumber}}
+    Email: {{Customer.emailAddress}}
+    Contact How? {{Customer.preferredContactMethod}}
+
+  </mat-card-content>
+  <mat-card-actions></mat-card-actions>
+</mat-card>

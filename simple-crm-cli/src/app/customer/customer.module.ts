@@ -12,10 +12,15 @@ import { CustomerCreateDialogComponent } from './customer-create-dialog/customer
 import { ReactiveFormsModule } from '@angular/forms';
 import { CustomerDetailComponent } from './customer-detail/customer-detail.component';
 import { StatusIconPipe } from './status-icon.pipe';
+import { CustomerListAlternateComponent } from './customer-list-alternate/customer-list-alternate.component';
 
 
 @NgModule({
-  declarations: [CustomerListPageComponent, CustomerCreateDialogComponent, CustomerDetailComponent, StatusIconPipe],
+  declarations: [CustomerListPageComponent,
+    CustomerCreateDialogComponent,
+    CustomerDetailComponent,
+    StatusIconPipe,
+    CustomerListAlternateComponent],
   imports: [
     CommonModule,
     HttpClientModule,

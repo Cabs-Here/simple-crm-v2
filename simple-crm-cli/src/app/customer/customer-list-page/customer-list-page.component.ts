@@ -32,7 +32,7 @@ export class CustomerListPageComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((customer: Customer) => {
       this.customerService.save(customer).subscribe(result => {
-        this.customerService.search('');
+        this.customers$ = this.customerService.search('');
       });
     });
   }

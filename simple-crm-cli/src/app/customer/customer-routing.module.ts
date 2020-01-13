@@ -11,7 +11,7 @@ const routes: Routes = [
   path: 'customers',
   pathMatch: 'full',
   component: CustomerListAlternateComponent,
-  canActivate: [AuthenticatedGuard]
+  //canActivate: [AuthenticatedGuard]
 },
 {
   path: 'customer/:id',

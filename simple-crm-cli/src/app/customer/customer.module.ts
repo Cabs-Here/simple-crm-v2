@@ -1,3 +1,4 @@
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -12,27 +13,39 @@ import { CustomerCreateDialogComponent } from './customer-create-dialog/customer
 import { ReactiveFormsModule } from '@angular/forms';
 import { CustomerDetailComponent } from './customer-detail/customer-detail.component';
 import { StatusIconPipe } from './status-icon.pipe';
-import { CustomerListAlternateComponent } from './customer-list-alternate/customer-list-alternate.component';
+import { StoreModule } from '@ngrx/store';
+import { customerFeatureKey, customerReducer } from './store/customer.store';
+import { EffectsModule } from '@ngrx/effects';
+import { CustomerStoreEffects } from './store/customer.store.effects';
 
 
 @NgModule({
-  declarations: [CustomerListPageComponent,
+  declarations: [
+    CustomerListPageComponent,
     CustomerCreateDialogComponent,
     CustomerDetailComponent,
-    StatusIconPipe,
-    CustomerListAlternateComponent],
+    StatusIconPipe
+  ],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     HttpClientModule,
     CustomerRoutingModule,
     SharedImportsModule,
-    ReactiveFormsModule
-  ],
-  entryComponents: [
-    CustomerCreateDialogComponent
+    /**
+     * StoreModule.forFeature is used for composing state
+     * from feature modules. These modules can be loaded
+     * eagerly or lazily and will be dynamically added to
+     * the existing state.
+     */
+    StoreModule.forFeature(customerFeatureKey, customerReducer),
+    EffectsModule.forFeature([CustomerStoreEffects])
   ],
   providers: [
     CustomerService
+  ],
+  entryComponents: [
+    CustomerCreateDialogComponent
   ]
 })
 export class CustomerModule { }

@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Customer } from '../customer.model';
 import { MatTableDataSource } from '@angular/material';
 import { CustomerService } from '../customer.service';
-import { Observable } from 'rxjs';
+import { Observable, combineLatest } from 'rxjs';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { CustomerCreateDialogComponent } from '../customer-create-dialog/customer-create-dialog.component';
 import { Router } from '@angular/router';
+import { FormControl } from '@angular/forms';
+import { startWith, debounceTime, map } from 'rxjs/operators';
 
 @Component({
   selector: 'crm-customer-list-alternate',
@@ -16,6 +18,7 @@ export class CustomerListAlternateComponent implements OnInit {
   customers$: Observable<Customer[]>;
   dataSource: MatTableDataSource<Customer>;
   displayColumns = ['statusIcon', 'name', 'phone', 'email', 'lastContactDate', 'status', 'detail'];
+  filterInput = new FormControl();
 
 
   constructor(private customerService: CustomerService,
@@ -23,8 +26,23 @@ export class CustomerListAlternateComponent implements OnInit {
               private router: Router) { }
 
   ngOnInit() {
-    this.customers$ = this.customerService.search('');
+    this.search();
   }
+
+  search() {
+    const fString$: Observable<string> = this.filterInput.valueChanges.pipe(
+      startWith(''),
+      debounceTime(700)
+    );
+    this.customers$ = combineLatest([this.customerService.search(''), fString$]).pipe(
+      map(([customers, fString]) => {
+        return customers.filter(cust => {
+          return (cust.firstName + ' ' + cust.lastName).indexOf(fString) >= 0;
+        });
+      })
+    );
+  }
+ 
   addCustomer(): void {
     const dialogRef = this.dialog.open(CustomerCreateDialogComponent, {
       width: '250px',
@@ -32,7 +50,7 @@ export class CustomerListAlternateComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((customer: Customer) => {
       this.customerService.save(customer).subscribe(result => {
-        this.customerService.search('').subscribe();
+        this.search();
       });
     });
   }

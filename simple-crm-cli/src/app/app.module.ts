@@ -12,6 +12,9 @@ import { AccountModule } from './account/account.module';
 import { LogoutCompleteComponent } from './logout-complete/logout-complete/logout-complete.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './account/jwt.interceptor';
+import { layoutReducer, layoutFeatureKey } from './store/layout.store';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 @NgModule({
   declarations: [
@@ -24,8 +27,14 @@ import { JwtInterceptor } from './account/jwt.interceptor';
     AppRoutingModule,
     SharedImportsModule,
     AccountModule,
-    CustomerModule
+    CustomerModule,
+    StoreModule.forRoot({}),
+    StoreModule.forFeature(layoutFeatureKey, layoutReducer),
+    StoreDevtoolsModule.instrument({
+      name: 'Nexul Academy - SimpleCRM'
+    })
   ],
+
   providers: [{
     provide: HTTP_INTERCEPTORS,
     useClass: JwtInterceptor,

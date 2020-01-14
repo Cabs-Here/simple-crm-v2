@@ -17,11 +17,13 @@ import { StoreModule } from '@ngrx/store';
 import { customerFeatureKey, customerReducer } from './store/customer.store';
 import { EffectsModule } from '@ngrx/effects';
 import { CustomerStoreEffects } from './store/customer.store.effects';
+import { CustomerListAlternateComponent } from './customer-list-alternate/customer-list-alternate.component';
 
 
 @NgModule({
   declarations: [
     CustomerListPageComponent,
+    CustomerListAlternateComponent,
     CustomerCreateDialogComponent,
     CustomerDetailComponent,
     StatusIconPipe

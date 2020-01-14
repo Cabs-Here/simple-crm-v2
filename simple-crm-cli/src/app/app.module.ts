@@ -6,7 +6,6 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
 import { SharedImportsModule } from './shared/shared-imports.module';
-import { CustomerModule } from './customer/customer.module';
 import { AppIconsService } from './shared/app-icons.service';
 import { AccountModule } from './account/account.module';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -26,7 +25,6 @@ import { EffectsModule } from '@ngrx/effects';
     AppRoutingModule,
     SharedImportsModule,
     AccountModule,
-    CustomerModule,
     /**
      * StoreModule.forRoot is imported once in the root module, accepting a reducer
      * function or object map of reducer functions. If passed an object of

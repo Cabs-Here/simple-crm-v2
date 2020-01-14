@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { customerSearchAction, customersSearchCompleteAction } from './customer.store';
+import { customerSearchAction, customersSearchCompleteAction } from '../store/customer.store';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { CustomerService } from '../customer.service';
 import { EMPTY } from 'rxjs';

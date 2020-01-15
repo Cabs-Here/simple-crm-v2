@@ -8,7 +8,7 @@ import { AppComponent } from './app.component';
 import { SharedImportsModule } from './shared/shared-imports.module';
 import { AppIconsService } from './shared/app-icons.service';
 import { AccountModule } from './account/account.module';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { JwtInterceptor } from './account/jwt.interceptor';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -23,6 +23,7 @@ import { EffectsModule } from '@ngrx/effects';
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
+    HttpClientModule,
     SharedImportsModule,
     AccountModule,
     /**

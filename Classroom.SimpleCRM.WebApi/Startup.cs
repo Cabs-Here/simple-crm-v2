@@ -1,28 +1,28 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Classroom.SimpleCRM.SqlDbServices;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
-using Classroom.SimpleCRM.WebApi.Auth;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System;
-using NSwag.Generation.Processors.Security;
-using System.Collections.Generic;
-using NSwag;
-using NSwag.AspNetCore;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Classroom.SimpleCRM.WebApi.Filters;
+﻿    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Infrastructure;
+    using Microsoft.AspNetCore.Mvc.Routing;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Classroom.SimpleCRM.SqlDbServices;
+    using Microsoft.AspNetCore.SpaServices.AngularCli;
+    using Classroom.SimpleCRM.WebApi.Auth;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.IdentityModel.Tokens;
+    using System.Text;
+    using System;
+    using NSwag.Generation.Processors.Security;
+    using System.Collections.Generic;
+    using NSwag;
+    using NSwag.AspNetCore;
+    using Newtonsoft.Json.Serialization;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
+    using Classroom.SimpleCRM.WebApi.Filters;
 
 namespace Classroom.SimpleCRM.WebApi
 {
@@ -198,7 +198,7 @@ namespace Classroom.SimpleCRM.WebApi
                 {
                     ClientId = microsoftOptions[nameof(MicrosoftAuthSettings.ClientId)],
                     ClientSecret = microsoftOptions[nameof(MicrosoftAuthSettings.ClientSecret)],
-                    AppName = "Simple CRM",
+                    AppName = "Roba",
                     Realm = "Nexul Academy"
                 };
             });

@@ -14,6 +14,8 @@ import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { layoutFeatureKey, layoutReducer } from './store/layout.store';
 import { EffectsModule } from '@ngrx/effects';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -41,7 +43,8 @@ import { EffectsModule } from '@ngrx/effects';
       // In a production build you would want to disable the Store Devtools
       // logOnly: environment.production,
     }),
-    EffectsModule.forRoot([])
+    EffectsModule.forRoot([]),
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
     {

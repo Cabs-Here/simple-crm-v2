@@ -10,6 +10,7 @@ export class CustomerService {
 
   get(customerId: number) {
     return this.http.get<Customer>('/api/customers/' + customerId);
+
   }
 
   search(term: string): Observable<Customer[]> {
@@ -20,8 +21,11 @@ export class CustomerService {
     if (customer.customerId > 0) {
       const params = new HttpParams();
       params.set('id', '' + customer.customerId);
-      return this.http.post<Customer>('/api/customers/:id', customer, {
-        params // same as 'params: params'
+      return this.http.put<Customer>('/api/customers/' + customer.customerId, customer, {
+        params,
+        headers: {
+          ifMatch: customer.lastContactDate
+        } // same as 'params: params'
       } );
     }
     return this.http.post<Customer>('/api/customers', customer);

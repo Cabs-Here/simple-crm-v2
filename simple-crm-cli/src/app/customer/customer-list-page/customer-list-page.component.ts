@@ -12,6 +12,7 @@ import { Store, select } from '@ngrx/store';
 import { CustomerState, CustomerSearchCritiera } from '../store/customer.store.model';
 import { customerSearchAction } from '../store/customer.store';
 import { selectCustomers } from '../store/customer.store.selectors';
+import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'crm-customer-list-page',
@@ -47,8 +48,9 @@ export class CustomerListPageComponent implements OnInit {
     );
     this.filteredCustomers$ = combineLatest([this.allCustomers$, fString$]).pipe(
       map(([customers, fString]) => {
+        fString = fString.toUpperCase();
         return customers.filter(cust => {
-          return (cust.firstName + ' ' + cust.lastName).indexOf(fString) >= 0;
+          return (cust.firstName + ' ' + cust.lastName).toUpperCase().indexOf(fString) >= 0;
         });
       })
     );
@@ -60,6 +62,9 @@ export class CustomerListPageComponent implements OnInit {
       data: null
     });
     dialogRef.afterClosed().subscribe((customer: Customer) => {
+      if (!customer) {
+        return;
+      }
       // TODO: bonus exercise: convert this to dispatch an action
       this.customerService.save(customer).subscribe(result => {
         this.search();

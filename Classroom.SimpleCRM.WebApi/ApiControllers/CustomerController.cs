@@ -1,12 +1,12 @@
-﻿using System;
-using System.Linq;
-using Classroom.SimpleCRM.WebApi.Filters;
+﻿using Classroom.SimpleCRM.WebApi.Filters;
 using Classroom.SimpleCRM.WebApi.Models;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using System;
+using System.Linq;
 
 namespace Classroom.SimpleCRM.WebApi.ApiControllers
 {

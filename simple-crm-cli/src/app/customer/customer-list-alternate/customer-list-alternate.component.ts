@@ -25,7 +25,7 @@ export class CustomerListAlternateComponent implements OnInit {
   }
   openDetail(item: Customer) {
     if (item) {
-      this.router.navigate([`./customer/${item.customerId}`]);
+      this.router.navigate([`./customers/${item.customerId}`]);
     }
   }
 
